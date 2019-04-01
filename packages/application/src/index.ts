@@ -244,22 +244,28 @@ class Application<T extends Widget> {
    *   or rejects with an error if it cannot be activated.
    */
   activatePlugin(id: string): Promise<void> {
+	console.info("ACTIVATE PLUGIN - A",id)
     // Reject the promise if the plugin is not registered.
     let data = this._pluginMap[id];
     if (!data) {
       return Promise.reject(new Error(`Plugin '${id}' is not registered.`));
     }
 
+	console.info("ACTIVATE PLUGIN - B",id)
     // Resolve immediately if the plugin is already activated.
     if (data.activated) {
+	console.info("ACTIVATE PLUGIN - C",id)
       return Promise.resolve(undefined);
     }
 
+	console.info("ACTIVATE PLUGIN - D",id)
     // Return the pending resolver promise if it exists.
     if (data.promise) {
+	console.info("ACTIVATE PLUGIN - E",id)
       return data.promise;
     }
 
+	console.info("ACTIVATE PLUGIN - F",id)
     // Resolve the required services for the plugin.
     let required = data.requires.map(t => this.resolveRequiredService(t));
 
@@ -271,6 +277,7 @@ class Application<T extends Widget> {
 
     // Setup the resolver promise for the plugin.
     data.promise = Promise.all(promises).then(services => {
+	console.info("ACTIVATE PLUGIN",data)
       return data.activate.apply(undefined, [this, ...services]);
     }).then(service => {
       data.service = service;
